@@ -5,7 +5,21 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#DBE2EF"
     tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/loginTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="@string/login"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/editTextUserName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.118"
+        tools:layout_editor_absoluteX="16dp" />
 
     <EditText
         android:id="@+id/editTextUserName"
@@ -37,6 +51,7 @@
         android:layout_height="wrap_content"
         android:text="@string/login"
         android:onClick="Login"
+        android:backgroundTint="#112D4E"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -50,11 +65,13 @@
         android:layout_height="wrap_content"
         android:onClick="Register"
         android:text="@string/register"
+        android:backgroundTint="#112D4E"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LogInButton"
+
         app:layout_constraintVertical_bias="0.094" />
 
 

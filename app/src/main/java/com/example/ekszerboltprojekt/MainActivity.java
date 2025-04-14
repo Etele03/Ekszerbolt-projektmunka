@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, RegisterActivity.class);
         intent.putExtra("SECRET_KEY", 99);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
     }
 
     @Override

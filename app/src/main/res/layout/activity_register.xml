@@ -7,6 +7,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#DBE2EF"
     tools:context=".RegisterActivity">
 
     <TextView
@@ -103,14 +104,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/register"
-            android:onClick="register"/>
+            android:onClick="register"
+            android:backgroundTint="#112D4E"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:text="@string/cancel"
-            android:onClick="cancel"/>
+            android:onClick="cancel"
+            android:backgroundTint="#112D4E"/>
 
 </LinearLayout>
 
