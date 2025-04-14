@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">EkszerBolt projekt</string>
+    <string name="name">Név</string>
+    <string name="password">Jelszó</string>
+    <string name="login">Bejelentkezés</string>
+    <string name="register">Regisztráció</string>
+    <string name="user_name">Felhasználónév</string>
+    <string name="email_address">Email cím</string>
+    <string name="password_again">Jelszó újra</string>
+    <string name="cancel">Mégse</string>
+    <string name="phone_number">Telefonszám</string>
+</resources>
