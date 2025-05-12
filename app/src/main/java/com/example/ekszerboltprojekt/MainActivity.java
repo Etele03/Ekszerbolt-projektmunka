@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getName();
     private static final String PREF_KEY = MainActivity.class.getPackage().toString();
     private static final int SECRET_KEY = 99;
-    EditText userNameET;
+    EditText userNameET;    // valójában email-cím
     EditText passwordET;
     private SharedPreferences preferences;
     private FirebaseAuth mAuth;
