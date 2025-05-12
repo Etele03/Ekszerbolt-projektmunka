@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "104048138431",
+    "project_id": "ekszerbolt-d4e5e",
+    "storage_bucket": "ekszerbolt-d4e5e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104048138431:android:12643b72fc57049abc0e0a",
+        "android_client_info": {
+          "package_name": "com.example.ekszerboltprojekt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjsaoUsUlKdsQBp2oE1JEBM4puIk_zPvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

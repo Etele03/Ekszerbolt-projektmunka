@@ -7,12 +7,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     EditText userNameET;
     EditText passwordET;
     private SharedPreferences preferences;
+    private FirebaseAuth mAuth;
 
 
 
@@ -42,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
 
+        mAuth = FirebaseAuth.getInstance();
+
         Log.i(LOG_TAG, "onCreate");
 
     }
@@ -52,8 +62,24 @@ public class MainActivity extends AppCompatActivity {
         String username = userNameET.getText().toString();
         String password = passwordET.getText().toString();
 
-        Log.i(LOG_TAG, "Bejelentkezett: " + username + ", jelszó: "  + password);
+        //Log.i(LOG_TAG, "Bejelentkezett: " + username + ", jelszó: "  + password);
+        mAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    Log.d(LOG_TAG, "User login successfull!");
+                    startShopping();    // tovább megy a fő oldalra
+                }else{
+                    Log.d(LOG_TAG, "User login failed!");
+                    Toast.makeText(MainActivity.this, "User login failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
 
+    private void startShopping(){
+        Intent intent = new Intent(this, IndexActivity.class);
+        startActivity(intent);
     }
 
     public void Register(View view) {

@@ -9,10 +9,17 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -25,6 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText passwordAgainEditText;
     EditText phoneNumberEditText;
     private SharedPreferences preferences;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -57,6 +65,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         userNameEditText.setText(username);
         passwordEditText.setText(password);
+
+
+        mAuth = FirebaseAuth.getInstance();
 
         Log.i(LOG_TAG, "onCreate");
 
@@ -115,8 +126,23 @@ public class RegisterActivity extends AppCompatActivity {
         Log.i(LOG_TAG, "Regisztrált: " + username + ", email: " + email);
 
         Intent intent = new Intent(this, IndexActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
+        //startActivity(intent);
+
+
+
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    Log.d(LOG_TAG, "User created successfully");
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
+                }else{
+                    Log.d(LOG_TAG, "User creation failed!");
+                    Toast.makeText(RegisterActivity.this, "User creation failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
 
     }
