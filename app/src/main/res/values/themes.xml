@@ -6,4 +6,5 @@
     </style>
 
     <style name="Theme.EkszerBoltProjekt" parent="Base.Theme.EkszerBoltProjekt" />
+    <style name="ItemDetailText" parent="TextAppearance.AppCompat.Subhead"/>
 </resources>
