@@ -16,6 +16,7 @@
     <string name="logOut">Kijelentkeztés</string>
     <string name="settings">Beállítások</string>
     <string name="cart">Kosár</string>
+    <string name="nincs_talalat">Nincs találat.</string>
 
 
     <string-array name="shopping_item_names">

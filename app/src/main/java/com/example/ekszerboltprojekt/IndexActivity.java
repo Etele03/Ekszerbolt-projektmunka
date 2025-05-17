@@ -34,6 +34,7 @@ public class IndexActivity extends AppCompatActivity {
 
     private FrameLayout redCircle;
     private TextView contentTextView;
+    private TextView emptyView;
     private int gridNumber = 1;
     private int cartItems = 0;
 
@@ -64,6 +65,8 @@ public class IndexActivity extends AppCompatActivity {
         intializeData();
         mAdapter.notifyDataSetChanged();      // frissítjük az adaptert
         mAdapter.updateFullList();           // most másoljuk az adatokat szűréshez
+
+        emptyView = findViewById(R.id.empty_view);
 
 
     }
@@ -103,34 +106,21 @@ public class IndexActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 Log.d(LOG_TAG, s);
                 mAdapter.getFilter().filter(s);
+
+                // kis késleltetés, hogy megvárjuk a szűrés eredményét
+                new android.os.Handler().postDelayed(() -> {
+                    if (mAdapter.getItemCount() == 0) {
+                        emptyView.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyView.setVisibility(View.GONE);
+                    }
+                }, 100);
+
                 return false;
             }
         });
         return true;
     }
-
-
-    /*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case SETTINGS_ID:
-                Log.d(LOG_TAG, "LogOut clicked");
-                FirebaseAuth.getInstance().signOut();
-                finish();
-                return true;
-            case R.id.setting_button:
-                Log.d(LOG_TAG, "Settings clicked");
-                return true;
-            case R.id.cart:
-                Log.d(LOG_TAG, "Cart clicked");
-                return true;
-            default: return super.onOptionsItemSelected(item);
-        }
-    }
-
-*/
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
