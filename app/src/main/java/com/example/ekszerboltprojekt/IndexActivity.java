@@ -62,6 +62,8 @@ public class IndexActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         intializeData();
+        mAdapter.notifyDataSetChanged();      // frissítjük az adaptert
+        mAdapter.updateFullList();           // most másoljuk az adatokat szűréshez
 
 
     }
