@@ -10,25 +10,35 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
+
+// 🔹 Interfész a kosárba adáshoz
+interface OnItemAddToCartListener {
+    void onAddToCart();
+}
 
 public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapter.ViewHolder> implements Filterable {
 
     private ArrayList<ShoppingItem> mItemlist;
     private List<ShoppingItem> itemListFull;
     private Context mContext;
+    private OnItemAddToCartListener addToCartListener;
+
+    public void setOnItemAddToCartListener(OnItemAddToCartListener listener) {
+        this.addToCartListener = listener;
+    }
 
     public ShoppingItemAdapter(Context context, ArrayList<ShoppingItem> itemList) {
         this.mItemlist = itemList;
         this.mContext = context;
-        this.itemListFull = new ArrayList<>(itemList); // másolat az eredeti adathoz
+        this.itemListFull = new ArrayList<>(itemList); // eredeti lista mentése
     }
 
     @NonNull
@@ -43,7 +53,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
         ShoppingItem mCurrent = mItemlist.get(position);
         holder.bindTo(mCurrent);
 
-        // Animáció betöltése és alkalmazása
+        // 🔄 animáció
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.slide_in_row);
         holder.itemView.startAnimation(animation);
     }
@@ -60,6 +70,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
         private ImageView mItemImage;
         private RatingBar mRatingBar;
         private Button mButton;
+        private OnItemAddToCartListener listener;
 
         public ViewHolder(@NonNull View itemView, ShoppingItemAdapter adapter) {
             super(itemView);
@@ -70,6 +81,8 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
             mItemImage = itemView.findViewById(R.id.itemImage);
             mRatingBar = itemView.findViewById(R.id.ratingBar);
             mButton = itemView.findViewById(R.id.add_to_cart);
+
+            this.listener = adapter.addToCartListener; // 🔹 ide mentjük el a hivatkozást
         }
 
         public void bindTo(ShoppingItem currentItem) {
@@ -79,7 +92,11 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
             mItemImage.setImageResource(currentItem.getImageResource());
             mRatingBar.setRating(currentItem.getRated());
 
-            // Kosár gomb működését ide írhatod
+            mButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onAddToCart();
+                }
+            });
         }
     }
 

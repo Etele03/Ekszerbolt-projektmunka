@@ -65,10 +65,9 @@ public class IndexActivity extends AppCompatActivity {
         intializeData();
         mAdapter.notifyDataSetChanged();      // frissítjük az adaptert
         mAdapter.updateFullList();           // most másoljuk az adatokat szűréshez
+        mAdapter.setOnItemAddToCartListener(() -> updateAlertIcon());
 
         emptyView = findViewById(R.id.empty_view);
-
-
     }
 
     private void intializeData() {
@@ -165,13 +164,15 @@ public class IndexActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    public void updateAlertIcon(){
-        cartItems = (cartItems + 1);
-        if(0 < cartItems){
-            contentTextView.setText(String.valueOf(cartItems));
-        }else{
-            contentTextView.setText(" ");
+    public void updateAlertIcon() {
+        cartItems++;
+        if (redCircle != null && contentTextView != null) {
+            if (cartItems > 0) {
+                redCircle.setVisibility(View.VISIBLE); // 💡 EZ HIÁNYZOTT!
+                contentTextView.setText(String.valueOf(cartItems));
+            } else {
+                redCircle.setVisibility(View.GONE);
+            }
         }
-
     }
 }
