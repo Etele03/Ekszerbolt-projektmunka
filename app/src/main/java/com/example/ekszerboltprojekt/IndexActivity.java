@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.firebase.firestore.FieldValue;
+
 public class IndexActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
@@ -72,6 +74,7 @@ public class IndexActivity extends AppCompatActivity {
         mAdapter.setOnItemAddToCartListener(() -> updateAlertIcon());
 
         emptyView = findViewById(R.id.empty_view);
+
     }
 
     private void intializeData() {
@@ -82,24 +85,17 @@ public class IndexActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        String nev = doc.getString("nev");
-                        String leiras = doc.getString("leiras");
-                        String ar = doc.getString("ar"); // vagy doc.getLong("ar").toString()
-                        float rating = doc.getDouble("rating") != null ? doc.getDouble("rating").floatValue() : 0f;
-                        int imageRes = doc.getLong("imageRes") != null ? doc.getLong("imageRes").intValue() : R.drawable.ic_launcher_foreground;
-
-                        ShoppingItem item = new ShoppingItem(imageRes, nev, leiras, ar, rating);
+                        ShoppingItem item = doc.toObject(ShoppingItem.class);
                         mItemlist.add(item);
                     }
 
                     mAdapter.notifyDataSetChanged();
-                    mAdapter.updateFullList(); // kereséshez
+                    mAdapter.updateFullList();
                 })
                 .addOnFailureListener(e -> {
                     Log.e("FIRESTORE", "Hiba a Firestore lekérdezésnél", e);
                 });
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         super.onCreateOptionsMenu(menu);

@@ -6,12 +6,16 @@ public class ShoppingItem {
     private String info;
     private String price;
     private float rated;
-    private final int imageResource;
+    private int imageResource; // ❗ final eltávolítva
 
-    public ShoppingItem(int imageResource, String info, String name, String price, float rated) {
+    public ShoppingItem() {
+        // Szükséges Firestore-hoz
+    }
+
+    public ShoppingItem(int imageResource, String name, String info, String price, float rated) {
         this.imageResource = imageResource;
-        this.info = info;
         this.name = name;
+        this.info = info;
         this.price = price;
         this.rated = rated;
     }
@@ -19,15 +23,19 @@ public class ShoppingItem {
     public int getImageResource() {
         return imageResource;
     }
+
     public String getInfo() {
         return info;
     }
+
     public String getName() {
         return name;
     }
+
     public String getPrice() {
         return price;
     }
+
     public float getRated() {
         return rated;
     }
