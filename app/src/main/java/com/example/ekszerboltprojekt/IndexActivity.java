@@ -1,5 +1,6 @@
 package com.example.ekszerboltprojekt;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.util.Log;
@@ -144,6 +145,8 @@ public class IndexActivity extends AppCompatActivity {
 
         } else if (id == R.id.cart) {
             Log.d(LOG_TAG, "Cart clicked");
+            Intent intent = new Intent(this, CartActivity.class);
+            startActivity(intent);
             return true;
         }
 

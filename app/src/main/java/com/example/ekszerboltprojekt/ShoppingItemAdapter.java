@@ -1,6 +1,7 @@
 package com.example.ekszerboltprojekt;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,14 @@ import android.widget.Filterable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // 🔹 Interfész a kosárba adáshoz
 interface OnItemAddToCartListener {
@@ -95,6 +102,26 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
             mButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddToCart();
+                    //1. lépés – Kosár mentése Firestore-ba, amikor „Kosárba” gombra kattintanak
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    if (user != null) {
+                        String uid = user.getUid();
+
+                        Map<String, Object> cartItem = new HashMap<>();
+                        cartItem.put("name", currentItem.getName());
+                        cartItem.put("price", currentItem.getPrice());
+                        cartItem.put("quantity", 1); // alapértelmezett 1 db
+                        cartItem.put("imageResource", currentItem.getImageResource());
+
+                        db.collection("kosarak")
+                                .document(uid)
+                                .collection("termekek")
+                                .add(cartItem)
+                                .addOnSuccessListener(ref -> Log.d("FIRESTORE", "Kosárhoz hozzáadva: " + currentItem.getName()))
+                                .addOnFailureListener(e -> Log.e("FIRESTORE", "Hiba a kosárhoz adáskor", e));
+                    }
                 }
             });
         }

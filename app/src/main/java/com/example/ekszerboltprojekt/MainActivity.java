@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private void startShopping(){
         Intent intent = new Intent(this, IndexActivity.class);
         startActivity(intent);
+        finish(); // ← EZ HIÁNYZIK
     }
 
     public void Register(View view) {
