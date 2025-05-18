@@ -169,18 +169,43 @@ public class IndexActivity extends AppCompatActivity {
             }
         });
 
+        updateAlertIcon(); // mindig frissítse a kosárszámot
         return super.onPrepareOptionsMenu(menu);
     }
 
     public void updateAlertIcon() {
-        cartItems++;
-        if (redCircle != null && contentTextView != null) {
-            if (cartItems > 0) {
-                redCircle.setVisibility(View.VISIBLE); // 💡 EZ HIÁNYZOTT!
-                contentTextView.setText(String.valueOf(cartItems));
-            } else {
-                redCircle.setVisibility(View.GONE);
-            }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (user == null || redCircle == null || contentTextView == null) {
+            return; // biztos ami biztos
         }
+
+        String uid = user.getUid();
+
+        db.collection("kosarak")
+                .document(uid)
+                .collection("termekek")
+                .get()
+                .addOnSuccessListener(query -> {
+                    int totalItems = 0;
+                    for (QueryDocumentSnapshot doc : query) {
+                        Long qty = doc.getLong("quantity");
+                        if (qty != null) {
+                            totalItems += qty;
+                        }
+                    }
+
+                    if (totalItems > 0) {
+                        redCircle.setVisibility(View.VISIBLE);
+                        contentTextView.setText(String.valueOf(totalItems));
+                    } else {
+                        redCircle.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("CART_ICON", "Nem sikerült lekérni a kosarat", e);
+                });
     }
+
 }
