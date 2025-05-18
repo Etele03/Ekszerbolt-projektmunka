@@ -20,8 +20,7 @@ public class CartActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ArrayList<ShoppingItem> cartItems;
-    private ShoppingItemAdapter adapter;
-
+    private CartItemAdapter adapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +30,7 @@ public class CartActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         cartItems = new ArrayList<>();
-        adapter = new ShoppingItemAdapter(this, cartItems);
+        adapter = new CartItemAdapter(this, cartItems);
         recyclerView.setAdapter(adapter);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
