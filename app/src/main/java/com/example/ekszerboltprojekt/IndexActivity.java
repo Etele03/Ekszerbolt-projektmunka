@@ -178,7 +178,7 @@ public class IndexActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (user == null || redCircle == null || contentTextView == null) {
-            return; // biztos ami biztos
+            return;
         }
 
         String uid = user.getUid();
@@ -188,24 +188,20 @@ public class IndexActivity extends AppCompatActivity {
                 .collection("termekek")
                 .get()
                 .addOnSuccessListener(query -> {
-                    int totalItems = 0;
+                    int totalCount = 0;
                     for (QueryDocumentSnapshot doc : query) {
                         Long qty = doc.getLong("quantity");
-                        if (qty != null) {
-                            totalItems += qty;
-                        }
+                        totalCount += (qty != null) ? qty : 0;
                     }
 
-                    if (totalItems > 0) {
+                    if (totalCount > 0) {
                         redCircle.setVisibility(View.VISIBLE);
-                        contentTextView.setText(String.valueOf(totalItems));
+                        contentTextView.setText(String.valueOf(totalCount));
                     } else {
                         redCircle.setVisibility(View.GONE);
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Log.e("CART_ICON", "Nem sikerült lekérni a kosarat", e);
-                });
+                .addOnFailureListener(e -> Log.e("KOSAR", "Nem sikerült betölteni a kosár darabszámot", e));
     }
 
 }

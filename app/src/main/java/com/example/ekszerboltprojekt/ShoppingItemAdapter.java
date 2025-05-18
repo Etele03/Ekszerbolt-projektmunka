@@ -102,28 +102,49 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
             mButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddToCart();
-                    //1. lépés – Kosár mentése Firestore-ba, amikor „Kosárba” gombra kattintanak
+
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     if (user != null) {
                         String uid = user.getUid();
-
-                        Map<String, Object> cartItem = new HashMap<>();
-                        cartItem.put("name", currentItem.getName());
-                        cartItem.put("price", currentItem.getPrice());
-                        cartItem.put("quantity", 1); // alapértelmezett 1 db
-                        cartItem.put("imageResource", currentItem.getImageResource());
+                        String termekNev = currentItem.getName();
 
                         db.collection("kosarak")
                                 .document(uid)
                                 .collection("termekek")
-                                .add(cartItem)
-                                .addOnSuccessListener(ref -> Log.d("FIRESTORE", "Kosárhoz hozzáadva: " + currentItem.getName()))
-                                .addOnFailureListener(e -> Log.e("FIRESTORE", "Hiba a kosárhoz adáskor", e));
+                                .whereEqualTo("name", termekNev)
+                                .get()
+                                .addOnSuccessListener(query -> {
+                                    if (!query.isEmpty()) {
+                                        // ✅ Már van ilyen termék → quantity növelése
+                                        String docId = query.getDocuments().get(0).getId();
+                                        Long qty = query.getDocuments().get(0).getLong("quantity");
+                                        long ujMennyiseg = (qty != null ? qty : 1) + 1;
+
+                                        db.collection("kosarak")
+                                                .document(uid)
+                                                .collection("termekek")
+                                                .document(docId)
+                                                .update("quantity", ujMennyiseg);
+                                    } else {
+                                        // ➕ Még nincs → új dokumentum quantity = 1
+                                        Map<String, Object> ujTermek = new HashMap<>();
+                                        ujTermek.put("name", currentItem.getName());
+                                        ujTermek.put("price", currentItem.getPrice());
+                                        ujTermek.put("quantity", 1);
+                                        ujTermek.put("imageResource", currentItem.getImageResource());
+
+                                        db.collection("kosarak")
+                                                .document(uid)
+                                                .collection("termekek")
+                                                .add(ujTermek);
+                                    }
+                                });
                     }
                 }
             });
+
         }
     }
 

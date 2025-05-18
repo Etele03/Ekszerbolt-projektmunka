@@ -37,6 +37,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
         holder.price.setText(item.getPrice());
         holder.quantity.setText(item.getQuantity() + " db");
         holder.image.setImageResource(item.getImageResource());
+        holder.quantity.setText(item.getQuantity() + " db");
     }
 
     @Override
