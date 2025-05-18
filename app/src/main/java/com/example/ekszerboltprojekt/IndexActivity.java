@@ -265,4 +265,10 @@ public class IndexActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        updateAlertIcon();
+    }
 }

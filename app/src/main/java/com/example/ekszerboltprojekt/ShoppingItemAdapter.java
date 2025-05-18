@@ -1,6 +1,14 @@
 package com.example.ekszerboltprojekt;
-
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +23,10 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 // 🔹 Interfész a kosárba adáshoz
 interface OnItemAddToCartListener {
@@ -117,7 +130,6 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
                                 .get()
                                 .addOnSuccessListener(query -> {
                                     if (!query.isEmpty()) {
-                                        // ✅ Már van ilyen termék → quantity növelése
                                         String docId = query.getDocuments().get(0).getId();
                                         Long qty = query.getDocuments().get(0).getLong("quantity");
                                         long ujMennyiseg = (qty != null ? qty : 1) + 1;
@@ -126,9 +138,13 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
                                                 .document(uid)
                                                 .collection("termekek")
                                                 .document(docId)
-                                                .update("quantity", ujMennyiseg);
+                                                .update("quantity", ujMennyiseg)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    // ⬅️ 🔴 Kosár ikon frissítése broadcasttal
+                                                    Intent intent = new Intent("KOSAR_VALTOZOTT");
+                                                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                                                });
                                     } else {
-                                        // ➕ Még nincs → új dokumentum quantity = 1
                                         Map<String, Object> ujTermek = new HashMap<>();
                                         ujTermek.put("name", currentItem.getName());
                                         ujTermek.put("price", currentItem.getPrice());
@@ -138,14 +154,57 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
                                         db.collection("kosarak")
                                                 .document(uid)
                                                 .collection("termekek")
-                                                .add(ujTermek);
+                                                .add(ujTermek)
+                                                .addOnSuccessListener(ref -> {
+                                                    // ⬅️ 🔴 Kosár ikon frissítése broadcasttal
+                                                    Intent intent = new Intent("KOSAR_VALTOZOTT");
+                                                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                                                });
                                     }
                                 });
                     }
+
+                    // 🔔 ÉRTESÍTÉS
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.POST_NOTIFICATIONS)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions((Activity) mContext,
+                                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+                        }
+                    }
+
+                    NotificationManager notificationManager = (NotificationManager)
+                            mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    String channelId = "kosar_channel";
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(
+                                channelId,
+                                "Kosár értesítések",
+                                NotificationManager.IMPORTANCE_DEFAULT);
+                        notificationManager.createNotificationChannel(channel);
+                    }
+
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, channelId)
+                            .setSmallIcon(R.drawable.ic_shopping_cart)
+                            .setContentTitle("Kosárba adva")
+                            .setContentText(currentItem.getName() + " a kosárhoz lett adva.")
+                            .setAutoCancel(true);
+
+                    notificationManager.notify(new Random().nextInt(), builder.build());
+
+                    // ⏰ ALARM 30 mp MÚLVA
+                    Intent intent = new Intent(mContext, KosarEmlekeztetoReceiver.class);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                            mContext, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                    long triggerTime = System.currentTimeMillis() + 30 *  1000; // 30 mp
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
                 }
             });
-
         }
+
     }
 
     @Override
