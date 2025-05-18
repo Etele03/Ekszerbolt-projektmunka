@@ -29,6 +29,12 @@
         android:title="Ár szerint növekvő"
         app:showAsAction="never"
         android:orderInCategory="3"/>
+    <item
+        android:id="@+id/sort_by_price_desc"
+        android:title="Ár szerint csökkenő"
+        app:showAsAction="never"
+        android:orderInCategory="4"/>
+
 </menu>
 
 

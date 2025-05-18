@@ -164,6 +164,9 @@ public class IndexActivity extends AppCompatActivity {
         } else if (id == R.id.sort_by_price) {
             loadItemsSortedByPrice(); // 🔁 új metódus
             return true;
+        }else if (id == R.id.sort_by_price_desc) {
+            loadItemsSortedByPriceDescending(); // 🔽 új metódus
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -184,6 +187,24 @@ public class IndexActivity extends AppCompatActivity {
                     mAdapter.updateFullList();
                 })
                 .addOnFailureListener(e -> Log.e("FIRESTORE", "Nem sikerült rendezni ár szerint", e));
+    }
+
+    private void loadItemsSortedByPriceDescending() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        mItemlist.clear();
+
+        db.collection("termekek")
+                .orderBy("priceValue", Query.Direction.DESCENDING) // 🔽 csökkenő sorrend
+                .get()
+                .addOnSuccessListener(query -> {
+                    for (QueryDocumentSnapshot doc : query) {
+                        ShoppingItem item = doc.toObject(ShoppingItem.class);
+                        mItemlist.add(item);
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    mAdapter.updateFullList();
+                })
+                .addOnFailureListener(e -> Log.e("FIRESTORE", "Nem sikerült ár szerint csökkenve rendezni", e));
     }
 
 
