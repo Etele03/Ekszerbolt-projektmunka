@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class IndexActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = IndexActivity.class.getName();
     private FirebaseUser user;
+
 
 
     private final BroadcastReceiver cartChangedReceiver = new BroadcastReceiver() {
@@ -145,29 +147,45 @@ public class IndexActivity extends AppCompatActivity {
         });
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.log_outButton) {
-            Log.d(LOG_TAG, "LogOut clicked");
             FirebaseAuth.getInstance().signOut();
             finish();
             return true;
-
         } else if (id == R.id.setting_button) {
-            Log.d(LOG_TAG, "Settings clicked");
             return true;
-
         } else if (id == R.id.cart) {
-            Log.d(LOG_TAG, "Cart clicked");
-            Intent intent = new Intent(this, CartActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, CartActivity.class));
+            return true;
+        } else if (id == R.id.sort_by_price) {
+            loadItemsSortedByPrice(); // 🔁 új metódus
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+    private void loadItemsSortedByPrice() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        mItemlist.clear();
+
+        db.collection("termekek")
+                .orderBy("priceValue", Query.Direction.ASCENDING) // ✅ szám alapú rendezés
+                .get()
+                .addOnSuccessListener(query -> {
+                    for (QueryDocumentSnapshot doc : query) {
+                        ShoppingItem item = doc.toObject(ShoppingItem.class);
+                        mItemlist.add(item);
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    mAdapter.updateFullList();
+                })
+                .addOnFailureListener(e -> Log.e("FIRESTORE", "Nem sikerült rendezni ár szerint", e));
+    }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
