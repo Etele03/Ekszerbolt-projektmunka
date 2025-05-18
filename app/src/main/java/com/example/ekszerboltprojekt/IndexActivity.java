@@ -1,6 +1,9 @@
 package com.example.ekszerboltprojekt;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +22,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.MenuItemCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +52,15 @@ public class IndexActivity extends AppCompatActivity {
     private static final String LOG_TAG = IndexActivity.class.getName();
     private FirebaseUser user;
 
+
+    private final BroadcastReceiver cartChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateAlertIcon(); // 🔄 Frissíti a piros számot
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +88,9 @@ public class IndexActivity extends AppCompatActivity {
         mAdapter.setOnItemAddToCartListener(() -> updateAlertIcon());
 
         emptyView = findViewById(R.id.empty_view);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(cartChangedReceiver,
+                new IntentFilter("KOSAR_VALTOZOTT"));
 
     }
 
@@ -204,4 +220,10 @@ public class IndexActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e("KOSAR", "Nem sikerült betölteni a kosár darabszámot", e));
     }
 
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(cartChangedReceiver);
+        super.onDestroy();
+
+    }
 }
