@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-// 🔹 Interfész a kosárba adáshoz
+// Interfész a kosárba adáshoz
 interface OnItemAddToCartListener {
     void onAddToCart();
 }
@@ -73,7 +73,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
         ShoppingItem mCurrent = mItemlist.get(position);
         holder.bindTo(mCurrent);
 
-        // 🔄 animáció
+        //  animáció
         Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.slide_in_row);
         holder.itemView.startAnimation(animation);
     }
@@ -102,7 +102,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
             mRatingBar = itemView.findViewById(R.id.ratingBar);
             mButton = itemView.findViewById(R.id.add_to_cart);
 
-            this.listener = adapter.addToCartListener; // 🔹 ide mentjük el a hivatkozást
+            this.listener = adapter.addToCartListener; // ide mentjük el a hivatkozást
         }
 
         public void bindTo(ShoppingItem currentItem) {
@@ -140,7 +140,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
                                                 .document(docId)
                                                 .update("quantity", ujMennyiseg)
                                                 .addOnSuccessListener(aVoid -> {
-                                                    // ⬅️ 🔴 Kosár ikon frissítése broadcasttal
+                                                    //  Kosár ikon frissítése broadcasttal
                                                     Intent intent = new Intent("KOSAR_VALTOZOTT");
                                                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
                                                 });
@@ -156,7 +156,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
                                                 .collection("termekek")
                                                 .add(ujTermek)
                                                 .addOnSuccessListener(ref -> {
-                                                    // ⬅️ 🔴 Kosár ikon frissítése broadcasttal
+                                                    //  Kosár ikon frissítése broadcasttal
                                                     Intent intent = new Intent("KOSAR_VALTOZOTT");
                                                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
                                                 });
@@ -164,7 +164,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
                                 });
                     }
 
-                    // 🔔 ÉRTESÍTÉS
+                    // ÉRTESÍTÉS
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.POST_NOTIFICATIONS)
                                 != PackageManager.PERMISSION_GRANTED) {
@@ -193,7 +193,7 @@ public class ShoppingItemAdapter extends RecyclerView.Adapter<ShoppingItemAdapte
 
                     notificationManager.notify(new Random().nextInt(), builder.build());
 
-                    // ⏰ ALARM 30 mp MÚLVA
+                    //  ALARM 30 mp MÚLVA
                     Intent intent = new Intent(mContext, KosarEmlekeztetoReceiver.class);
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(
                             mContext, 0, intent, PendingIntent.FLAG_IMMUTABLE);

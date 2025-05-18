@@ -58,7 +58,7 @@ public class IndexActivity extends AppCompatActivity {
     private final BroadcastReceiver cartChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateAlertIcon(); // 🔄 Frissíti a piros számot
+            updateAlertIcon(); // Frissíti a piros számot
         }
     };
 
@@ -162,10 +162,10 @@ public class IndexActivity extends AppCompatActivity {
             startActivity(new Intent(this, CartActivity.class));
             return true;
         } else if (id == R.id.sort_by_price) {
-            loadItemsSortedByPrice(); // 🔁 új metódus
+            loadItemsSortedByPrice(); // új metódus
             return true;
         }else if (id == R.id.sort_by_price_desc) {
-            loadItemsSortedByPriceDescending(); // 🔽 új metódus
+            loadItemsSortedByPriceDescending(); // új metódus
             return true;
         }
 
@@ -176,7 +176,7 @@ public class IndexActivity extends AppCompatActivity {
         mItemlist.clear();
 
         db.collection("termekek")
-                .orderBy("priceValue", Query.Direction.ASCENDING) // ✅ szám alapú rendezés
+                .orderBy("priceValue", Query.Direction.ASCENDING) // szám alapú rendezés
                 .get()
                 .addOnSuccessListener(query -> {
                     for (QueryDocumentSnapshot doc : query) {
@@ -194,7 +194,7 @@ public class IndexActivity extends AppCompatActivity {
         mItemlist.clear();
 
         db.collection("termekek")
-                .orderBy("priceValue", Query.Direction.DESCENDING) // 🔽 csökkenő sorrend
+                .orderBy("priceValue", Query.Direction.DESCENDING) // csökkenő sorrend
                 .get()
                 .addOnSuccessListener(query -> {
                     for (QueryDocumentSnapshot doc : query) {

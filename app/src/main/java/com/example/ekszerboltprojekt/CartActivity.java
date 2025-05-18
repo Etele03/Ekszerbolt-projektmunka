@@ -43,7 +43,7 @@ public class CartActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔁 Kosár betöltése Firestore-ból
+        //  Kosár betöltése Firestore-ból
         String uid = user.getUid();
 
         db.collection("kosarak")

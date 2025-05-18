@@ -49,8 +49,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
         // ➕ gomb
         holder.increaseButton.setOnClickListener(v -> {
             int newQty = item.getQuantity() + 1;
-            item.setQuantity(newQty); // 🔄 Frissítés azonnal a modellben
-            notifyItemChanged(holder.getAdapterPosition()); // 🔄 Nézet frissítése
+            item.setQuantity(newQty); //  Frissítés azonnal a modellben
+            notifyItemChanged(holder.getAdapterPosition()); //  Nézet frissítése
             updateQuantity(item, newQty); // Firestore frissítés
         });
 
@@ -58,7 +58,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
             int newQty = item.getQuantity() - 1;
             if (newQty <= 0) {
                 deleteItem(item);
-                cartItems.remove(holder.getAdapterPosition()); // 🔴 Törlés a listából
+                cartItems.remove(holder.getAdapterPosition()); //  Törlés a listából
                 notifyItemRemoved(holder.getAdapterPosition());
             } else {
                 item.setQuantity(newQty);

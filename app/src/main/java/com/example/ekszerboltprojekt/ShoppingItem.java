@@ -6,7 +6,7 @@ public class ShoppingItem {
     private String info;
     private String price;
     private float rated;
-    private int imageResource; // ❗ final eltávolítva
+    private int imageResource; // final eltávolítva
     private int quantity;
 
 
