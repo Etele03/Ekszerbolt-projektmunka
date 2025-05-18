@@ -23,8 +23,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class IndexActivity extends AppCompatActivity {
 
@@ -71,21 +75,29 @@ public class IndexActivity extends AppCompatActivity {
     }
 
     private void intializeData() {
-        String[] itemsList = getResources().getStringArray(R.array.shopping_item_names);
-        String[] itemsInfo = getResources().getStringArray(R.array.shopping_item_desc);
-        String[] itemsPrice = getResources().getStringArray(R.array.shopping_item_price);
-        TypedArray itemsImageResource = getResources().obtainTypedArray(R.array.shopping_item_images);
-        TypedArray itemsRate = getResources().obtainTypedArray(R.array.shopping_item_rates);
-
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         mItemlist.clear();
 
-        for (int i = 0; i < itemsList.length; i++){
-            mItemlist.add(new ShoppingItem(itemsImageResource.getResourceId(i,0), itemsList[i],itemsInfo[i], itemsPrice[i], itemsRate.getFloat(i,0)));
-        }
+        db.collection("termekek")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        String nev = doc.getString("nev");
+                        String leiras = doc.getString("leiras");
+                        String ar = doc.getString("ar"); // vagy doc.getLong("ar").toString()
+                        float rating = doc.getDouble("rating") != null ? doc.getDouble("rating").floatValue() : 0f;
+                        int imageRes = doc.getLong("imageRes") != null ? doc.getLong("imageRes").intValue() : R.drawable.ic_launcher_foreground;
 
-        itemsImageResource.recycle();
-        mAdapter.notifyDataSetChanged();
+                        ShoppingItem item = new ShoppingItem(imageRes, nev, leiras, ar, rating);
+                        mItemlist.add(item);
+                    }
 
+                    mAdapter.notifyDataSetChanged();
+                    mAdapter.updateFullList(); // kereséshez
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FIRESTORE", "Hiba a Firestore lekérdezésnél", e);
+                });
     }
 
     @Override
@@ -120,7 +132,6 @@ public class IndexActivity extends AppCompatActivity {
         });
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -143,7 +154,6 @@ public class IndexActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
@@ -159,7 +169,6 @@ public class IndexActivity extends AppCompatActivity {
                 onOptionsItemSelected(alertMenuItem);
             }
         });
-
 
         return super.onPrepareOptionsMenu(menu);
     }
